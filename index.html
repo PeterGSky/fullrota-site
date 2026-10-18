@@ -1,0 +1,1300 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FullRota | Recruitment CRM with WhatsApp built in</title>
+<meta name="description" content="FullRota is a recruitment CRM for staffing agencies in any specialism, with WhatsApp built in. A service from Kinetic Flow Limited.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://fullrota.com/">
+<meta property="og:title" content="FullRota">
+<meta property="og:description" content="Recruitment CRM for staffing agencies, with WhatsApp built in.">
+<meta property="og:url" content="https://fullrota.com/">
+<meta property="og:type" content="website">
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a morning log. Mono timestamps run down a gutter beside each chat thread,
+   and highlighter yellow marks the one thing that got booked. Everything else stays quiet. */
+:root {
+  --paper: #F3F6F1;
+  --surface: #FFFFFF;
+  --thread: #E7EDE6;
+  --ink: #11261F;
+  --ink-soft: #4B5F57;
+  --line: #D0DAD2;
+  --action: #17694D;
+  --action-ink: #FFFFFF;
+  --bubble-in: #FFFFFF;
+  --bubble-out: #D9F0CF;
+  --mark: #FFE04A;
+  --mark-ink: #11261F;
+  --ok: #17693F;
+  --ok-bg: #DCEFE2;
+  --warn: #855600;
+  --warn-bg: #FFEFC2;
+  --crit: #A8231C;
+  --crit-bg: #FBE1DE;
+  --overlay: rgba(17, 38, 31, 0.45);
+  --rb-face: #FFE04A;
+  --rb-feature: #11261F;
+
+  --display: "Archivo", "Arial Narrow", Arial, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --fs-small: 0.8125rem;
+  --fs-body: 1.0625rem;
+  --fs-h3: 1.25rem;
+  --fs-h2: clamp(1.75rem, 1.2rem + 2.4vw, 2.625rem);
+  --fs-h1: clamp(2.5rem, 1.4rem + 5vw, 4.5rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0D1814;
+    --surface: #15241E;
+    --thread: #111E19;
+    --ink: #E7EFE9;
+    --ink-soft: #9DB1A7;
+    --line: #2A3C34;
+    --action: #5CCB9C;
+    --action-ink: #0B1712;
+    --bubble-in: #1D2E27;
+    --bubble-out: #1F4A37;
+    --mark: #F2D23C;
+    --mark-ink: #11201A;
+    --ok: #74D6A2;
+    --ok-bg: #173527;
+    --warn: #F0C255;
+    --warn-bg: #3A2F10;
+    --crit: #FF938A;
+    --crit-bg: #40201D;
+    --overlay: rgba(0, 0, 0, 0.6);
+    --rb-face: #F2D23C;
+    --rb-feature: #11201A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0D1814;
+  --surface: #15241E;
+  --thread: #111E19;
+  --ink: #E7EFE9;
+  --ink-soft: #9DB1A7;
+  --line: #2A3C34;
+  --action: #5CCB9C;
+  --action-ink: #0B1712;
+  --bubble-in: #1D2E27;
+  --bubble-out: #1F4A37;
+  --mark: #F2D23C;
+  --mark-ink: #11201A;
+  --ok: #74D6A2;
+  --ok-bg: #173527;
+  --warn: #F0C255;
+  --warn-bg: #3A2F10;
+  --crit: #FF938A;
+  --crit-bg: #40201D;
+  --overlay: rgba(0, 0, 0, 0.6);
+  --rb-face: #F2D23C;
+  --rb-feature: #11201A;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: var(--fs-body);
+  line-height: 1.55;
+}
+.wrap {
+  max-width: 70rem;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 40px);
+}
+h1, h2, h3, p, ol, ul, figure, table { margin: 0; }
+ol, ul { padding: 0; list-style: none; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; }
+h1 { font-size: var(--fs-h1); font-weight: 800; font-stretch: 108%; line-height: 1.02; letter-spacing: -0.025em; }
+h2 { font-size: var(--fs-h2); font-weight: 750; font-stretch: 105%; line-height: 1.08; letter-spacing: -0.02em; max-width: 22ch; }
+h3 { font-size: var(--fs-h3); font-weight: 700; line-height: 1.2; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--action); outline-offset: 3px; border-radius: 4px; }
+
+mark {
+  background: linear-gradient(transparent 10%, var(--mark) 10%, var(--mark) 90%, transparent 90%);
+  color: var(--mark-ink);
+  padding: 0 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.label {
+  font-family: var(--mono);
+  font-size: var(--fs-small);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.lede { color: var(--ink-soft); max-width: 60ch; }
+
+/* Header */
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-block: 20px;
+}
+.brand {
+  font-family: var(--display);
+  font-weight: 800;
+  font-stretch: 112%;
+  font-size: 1.375rem;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.bm { width: 1.15em; height: 1.15em; display: block; }
+.bm rect { fill: var(--ink); }
+.bm rect.last { fill: var(--mark); }
+.brand-rota { color: var(--action); }
+.nav { display: flex; align-items: center; gap: 24px; font-size: 1rem; }
+.nav a { text-decoration: none; color: var(--ink-soft); }
+.nav a:hover { color: var(--ink); }
+.nav .btn { color: var(--action-ink); }
+@media (max-width: 720px) { .nav .nav-link { display: none; } }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--body);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.7em 1.15em;
+  border-radius: 999px;
+  border: 2px solid var(--action);
+  background: var(--action);
+  color: var(--action-ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } .btn:hover { transform: none; } }
+
+/* Page rhythm */
+main { display: flex; flex-direction: column; gap: clamp(72px, 10vw, 128px); padding-block: clamp(24px, 5vw, 56px) clamp(72px, 10vw, 128px); }
+.section-head { display: flex; flex-direction: column; gap: 16px; margin-bottom: clamp(28px, 4vw, 48px); }
+
+/* Sector switch */
+.switch {
+  display: inline-flex;
+  padding: 4px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  gap: 4px;
+  align-self: flex-start;
+}
+.switch button {
+  font-family: var(--body);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  padding: 0.4em 1em;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+/* Hero */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+.hero-copy { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.hero-copy .lede { font-size: 1.1875rem; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+@media (max-width: 900px) { .hero { grid-template-columns: minmax(0, 1fr); } }
+
+/* Thread */
+.panel {
+  background: var(--thread);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: clamp(16px, 2.5vw, 28px);
+  min-width: 0;
+}
+.panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+.thread { display: flex; flex-direction: column; gap: 16px; }
+.row { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: 12px; align-items: start; }
+.row time {
+  font-family: var(--mono);
+  font-size: var(--fs-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  padding-top: 0.55em;
+}
+.row .body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.notice { font-size: 0.9375rem; color: var(--ink-soft); padding-top: 0.3em; }
+.notice strong { color: var(--ink); }
+.bubble {
+  max-width: 34ch;
+  padding: 0.6em 0.85em;
+  border-radius: 14px;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.bubble.out { background: var(--bubble-out); align-self: flex-end; border-bottom-right-radius: 4px; }
+.bubble.in { background: var(--bubble-in); align-self: flex-start; border-bottom-left-radius: 4px; }
+.bubble .who { display: block; font-size: var(--fs-small); font-weight: 700; color: var(--action); }
+.replies { display: flex; flex-wrap: wrap; gap: 6px; align-self: flex-end; }
+.replies span {
+  font-size: var(--fs-small);
+  font-weight: 700;
+  padding: 0.3em 0.8em;
+  border-radius: 999px;
+  border: 1.5px solid var(--action);
+  color: var(--action);
+}
+.sent-to { font-size: var(--fs-small); color: var(--ink-soft); align-self: flex-end; text-align: right; max-width: 38ch; }
+.booked { font-family: var(--display); font-weight: 750; font-size: 1.125rem; line-height: 1.5; }
+
+/* Problem */
+.three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 3vw, 40px); }
+.three > div { display: flex; flex-direction: column; gap: 10px; padding-top: 18px; border-top: 2px solid var(--ink); }
+.three p { color: var(--ink-soft); }
+@media (max-width: 800px) { .three { grid-template-columns: minmax(0, 1fr); } }
+
+/* Features */
+.four { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(28px, 4vw, 48px) clamp(32px, 5vw, 72px); }
+.four > div { display: flex; flex-direction: column; gap: 8px; }
+.four p { color: var(--ink-soft); max-width: 46ch; }
+@media (max-width: 720px) { .four { grid-template-columns: minmax(0, 1fr); } }
+
+.board { margin-top: clamp(40px, 6vw, 72px); display: flex; flex-direction: column; gap: 14px; }
+.board-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.board table { border-collapse: collapse; width: 100%; min-width: 34rem; font-size: 0.9375rem; }
+.board th, .board td { padding: 0.7em 0.75em; text-align: center; border-bottom: 1px solid var(--line); }
+.board tr:last-child th, .board tr:last-child td { border-bottom: 0; }
+.board thead th { font-family: var(--mono); font-size: var(--fs-small); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
+.board th[scope="row"] { text-align: left; font-weight: 700; white-space: nowrap; }
+.board th[scope="row"] small { display: block; font-weight: 400; font-size: var(--fs-small); color: var(--ink-soft); }
+.cell { display: inline-block; white-space: nowrap; min-width: 4.2em; padding: 0.2em 0.5em; border-radius: 6px; font-size: var(--fs-small); font-weight: 700; }
+.cell.free { background: var(--bubble-out); color: var(--ink); }
+.cell.bkd { background: var(--mark); color: var(--mark-ink); }
+.cell.off { color: var(--ink-soft); font-weight: 400; }
+.cell.unk { border: 1.5px dashed var(--ink-soft); color: var(--ink-soft); }
+.board figcaption { font-size: 0.9375rem; color: var(--ink-soft); max-width: 70ch; }
+
+/* Compliance */
+.split { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
+.split .section-head { margin-bottom: 0; }
+@media (max-width: 900px) { .split { grid-template-columns: minmax(0, 1fr); } }
+.record { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: clamp(16px, 2.5vw, 28px); min-width: 0; }
+.record-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.record-head strong { font-family: var(--display); font-size: var(--fs-h3); font-weight: 750; }
+.checks li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; align-items: center; padding-block: 13px; border-bottom: 1px solid var(--line); }
+.checks li:last-child { border-bottom: 0; padding-bottom: 0; }
+.checks .what { font-weight: 700; }
+.checks .detail { display: block; font-weight: 400; font-size: 0.9375rem; color: var(--ink-soft); }
+.chip { font-size: var(--fs-small); font-weight: 700; padding: 0.25em 0.75em; border-radius: 999px; white-space: nowrap; }
+.chip.ok { background: var(--ok-bg); color: var(--ok); }
+.chip.warn { background: var(--warn-bg); color: var(--warn); }
+.chip.crit { background: var(--crit-bg); color: var(--crit); }
+.fine { font-size: 0.9375rem; color: var(--ink-soft); }
+
+.comp-left { display: flex; flex-direction: column; gap: clamp(28px, 4vw, 40px); min-width: 0; }
+
+/* Data */
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 clamp(32px, 5vw, 72px); }
+.two > div { display: flex; flex-direction: column; gap: 6px; padding-block: 20px; border-top: 1px solid var(--line); }
+.two p { color: var(--ink-soft); max-width: 46ch; }
+@media (max-width: 720px) { .two { grid-template-columns: minmax(0, 1fr); } }
+
+/* Setup */
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 3vw, 40px); counter-reset: step; }
+.steps li { counter-increment: step; display: flex; flex-direction: column; gap: 10px; }
+.steps li::before {
+  content: counter(step);
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 500;
+  width: 2.25rem; height: 2.25rem;
+  display: grid; place-items: center;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+}
+.steps p { color: var(--ink-soft); }
+@media (max-width: 800px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+
+/* Your brand */
+.brand-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(32px, 5vw, 64px); align-items: center; }
+@media (max-width: 900px) { .brand-grid { grid-template-columns: minmax(0, 1fr); } }
+.brand-shot { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.brand-shot img { width: 100%; max-width: 760px; height: auto; display: block; }
+.brand-points { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.brand-points li { display: grid; grid-template-columns: 2rem minmax(0, 1fr); gap: 14px; align-items: start; }
+.brand-points h3 { margin-bottom: 4px; }
+.brand-points p { color: var(--ink-soft); }
+.num { width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; background: var(--mark); color: var(--mark-ink); border: 2px solid var(--mark-ink); font-weight: 700; font-size: 0.9375rem; }
+
+/* Pricing */
+.plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); align-items: stretch; }
+@media (max-width: 900px) { .plans { grid-template-columns: minmax(0, 1fr); } }
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: clamp(20px, 2.5vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--paper);
+  min-width: 0;
+}
+.plan.featured { background: var(--surface); border: 2px solid var(--ink); }
+.plan-top { display: flex; flex-direction: column; gap: 4px; }
+.plan-for { font-size: 0.9375rem; color: var(--ink-soft); }
+.price { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.price .amount { font-family: var(--display); font-weight: 800; font-stretch: 108%; font-size: 2.5rem; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.price .per { font-size: 0.9375rem; color: var(--ink-soft); }
+.plan-list { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; padding-top: 16px; border-top: 1px solid var(--line); }
+.plan-list li { padding-left: 1.5em; position: relative; }
+.plan-list li::before { content: ""; position: absolute; left: 0.2em; top: 0.45em; width: 0.55em; height: 0.3em; border-left: 2px solid var(--action); border-bottom: 2px solid var(--action); transform: rotate(-45deg); }
+.plan .btn { align-self: flex-start; }
+.price-notes { display: flex; flex-direction: column; gap: 12px; margin-top: clamp(24px, 3vw, 36px); max-width: 70ch; }
+.price-notes strong { color: var(--ink); }
+
+/* Availability check */
+.avail { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (min-width: 1000px) { .avail { grid-template-columns: minmax(0, 23rem) minmax(0, 1fr); } }
+.form-card {
+  align-self: flex-end;
+  width: min(100%, 30ch);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.75em 0.9em;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.9375rem;
+}
+.form-title { font-weight: 700; padding-bottom: 6px; }
+.form-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 6px; border-top: 1px solid var(--line); }
+.form-row .muted { color: var(--ink-soft); font-size: var(--fs-small); }
+.box { width: 1.15em; height: 1.15em; border-radius: 4px; border: 2px solid var(--ink-soft); display: inline-grid; place-items: center; flex-shrink: 0; }
+.box.on { background: var(--action); border-color: var(--action); }
+.box.on::after { content: ""; width: 0.5em; height: 0.28em; margin-top: -0.12em; border-left: 2px solid var(--action-ink); border-bottom: 2px solid var(--action-ink); transform: rotate(-45deg); }
+.pick { font-size: var(--fs-small); font-weight: 700; padding: 0.15em 0.6em; border-radius: 999px; }
+.pick.on { background: var(--bubble-out); color: var(--ink); }
+.pick.off { color: var(--ink-soft); font-weight: 400; }
+.form-send { margin-top: 8px; text-align: center; font-weight: 700; padding: 0.45em; border-radius: 999px; background: var(--action); color: var(--action-ink); }
+
+/* Log in link */
+.login-link { background: none; border: 0; padding: 0.4em 0.2em; font: inherit; font-size: 1rem; font-weight: 700; color: var(--ink); cursor: pointer; }
+.login-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* FAQ */
+.faqs { display: flex; flex-direction: column; max-width: 52rem; border-top: 1px solid var(--line); }
+.faq { border-bottom: 1px solid var(--line); }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 18px; font-family: var(--display); font-weight: 700; font-size: 1.125rem; line-height: 1.3; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font-family: var(--mono); font-size: 1.5rem; font-weight: 400; color: var(--action); flex-shrink: 0; width: 1em; text-align: center; }
+.faq[open] summary::after { content: "–"; }
+.faq-a { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; color: var(--ink-soft); max-width: 65ch; }
+.faq-a p { margin: 0; }
+
+/* Footer */
+.site-foot { border-top: 1px solid var(--line); padding-block: 36px 44px; display: flex; flex-direction: column; gap: 24px; }
+.foot-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px 48px; }
+.foot-brand { display: flex; flex-direction: column; gap: 6px; }
+.foot-by { margin: 0; font-size: 0.9375rem; color: var(--ink-soft); }
+.foot-links { display: flex; flex-wrap: wrap; gap: 10px 24px; align-content: flex-start; max-width: 40rem; }
+.foot-links a { color: var(--ink); font-size: 0.9375rem; text-decoration: none; }
+.foot-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.foot-legal { display: flex; flex-direction: column; gap: 6px; font-size: 0.8125rem; color: var(--ink-soft); }
+.foot-legal p { margin: 0; }
+
+/* Login modal */
+.modal { position: fixed; inset: 0; z-index: 50; background: var(--overlay); display: grid; place-items: center; padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); }
+.modal-card { position: relative; width: min(100%, 26rem); max-height: 100%; overflow-y: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 16px; }
+.modal-card h2 { font-size: 1.75rem; }
+.modal-close { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; color: var(--ink-soft); font-size: 1.5rem; cursor: pointer; }
+.modal-close:hover { background: var(--paper); }
+.who-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border: 1.5px solid var(--ink); border-radius: 999px; }
+.who-btn { font: inherit; font-size: 0.875rem; font-weight: 700; padding: 0.5em 0.6em; border-radius: 999px; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
+.who-btn[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.login-form { display: flex; flex-direction: column; gap: 14px; }
+.login-form .field { display: flex; flex-direction: column; gap: 6px; }
+.login-form label { font-size: 0.875rem; font-weight: 700; }
+.login-form input { font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 0.65em 0.8em; }
+.login-form input:focus-visible { outline: 3px solid var(--action); outline-offset: 1px; }
+.login-submit { width: 100%; }
+.text-btn { background: none; border: 0; padding: 0; font: inherit; font-size: 0.9375rem; color: var(--action); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; align-self: flex-start; }
+.form-msg { margin: 0; padding: 10px 12px; border-radius: 10px; background: var(--warn-bg); color: var(--warn); font-size: 0.9375rem; }
+
+/* Robbie co-pilot */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.rb .rb-face { fill: var(--rb-face); }
+.rb .rb-ball { fill: var(--rb-face); stroke: var(--ink); stroke-width: 3; }
+.rb .rb-line { stroke: var(--ink); stroke-width: 5; stroke-linecap: round; fill: none; }
+.rb .rb-eye { fill: var(--rb-feature); }
+.rb .rb-smile { fill: none; stroke: var(--rb-feature); stroke-width: 5.5; stroke-linecap: round; }
+.robbie { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 40; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.robbie-fab { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px 6px 8px; border-radius: 999px; border: 1.5px solid var(--ink); background: var(--surface); color: var(--ink); font: inherit; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 6px 20px rgba(17, 38, 31, 0.18); }
+.robbie-fab:hover { transform: translateY(-1px); }
+.robbie-fab[aria-expanded="true"] { display: none; }
+.robbie-panel { width: min(calc(100vw - 32px), 24rem); height: min(36rem, calc(100vh - 120px)); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 14px 40px rgba(17, 38, 31, 0.22); overflow: hidden; }
+.robbie-head { display: flex; align-items: center; gap: 10px; padding: 12px 12px 12px 16px; border-bottom: 1px solid var(--line); }
+.robbie-title { display: flex; flex-direction: column; line-height: 1.2; flex: 1; min-width: 0; }
+.robbie-title span { font-size: 0.8125rem; color: var(--ink-soft); }
+.robbie-x { width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; color: var(--ink-soft); font-size: 1.5rem; cursor: pointer; }
+.robbie-x:hover { background: var(--paper); }
+.robbie-log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--thread); }
+.rmsg { max-width: 88%; padding: 0.6em 0.85em; border-radius: 14px; font-size: 0.9375rem; line-height: 1.45; }
+.rmsg p { margin: 0; }
+.rmsg p + p { margin-top: 6px; }
+.rmsg.bot { align-self: flex-start; background: var(--bubble-in); border-bottom-left-radius: 4px; }
+.rmsg.me { align-self: flex-end; background: var(--bubble-out); border-bottom-right-radius: 4px; }
+.rmsg a { color: var(--action); font-weight: 700; }
+.rmsg.typing { color: var(--ink-soft); font-style: italic; }
+.human-card { display: flex; flex-direction: column; gap: 8px; }
+.human-card .addr { font-family: var(--mono); font-size: 0.875rem; overflow-wrap: anywhere; user-select: all; }
+.human-card .row { display: flex; flex-wrap: wrap; gap: 8px; }
+.mini-btn { font: inherit; font-size: 0.8125rem; font-weight: 700; padding: 0.35em 0.9em; border-radius: 999px; border: 1.5px solid var(--action); background: transparent; color: var(--action); cursor: pointer; text-decoration: none; }
+.mini-btn.solid { background: var(--action); color: var(--action-ink); }
+.robbie-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px 0; }
+.robbie-chips button { font: inherit; font-size: 0.8125rem; font-weight: 700; padding: 0.35em 0.8em; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.robbie-chips button:hover { border-color: var(--action); color: var(--action); }
+.robbie-form { display: flex; gap: 8px; padding: 10px 12px; }
+.robbie-form input { flex: 1; min-width: 0; font: inherit; font-size: 0.9375rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 0.6em 1em; }
+.robbie-send { width: 42px; height: 42px; flex-shrink: 0; border-radius: 50%; border: 0; background: var(--action); color: var(--action-ink); display: grid; place-items: center; cursor: pointer; }
+.robbie-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 12px 12px; font-size: 0.75rem; color: var(--ink-soft); flex-wrap: wrap; }
+.robbie-human { font: inherit; font-size: 0.875rem; font-weight: 700; padding: 0.45em 1em; border-radius: 999px; border: 1.5px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; }
+.robbie-human:hover { background: var(--ink); color: var(--paper); }
+@media (prefers-reduced-motion: reduce) { .robbie-fab:hover { transform: none; } }
+
+/* Demo */
+.demo {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: clamp(24px, 5vw, 56px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.demo h2 { max-width: 20ch; }
+.contact { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 8px; }
+.address { font-family: var(--mono); font-size: clamp(1rem, 0.8rem + 1vw, 1.375rem); overflow-wrap: anywhere; user-select: all; min-width: 0; }
+
+footer { border-top: 1px solid var(--line); padding-block: 28px 40px; font-size: 0.875rem; color: var(--ink-soft); display: flex; flex-direction: column; gap: 6px; }
+</style>
+
+<div class="wrap" id="page" data-sector="education">
+
+  <header class="top">
+    <a class="brand" href="#page"><svg class="bm" viewBox="0 0 100 100" aria-hidden="true"><rect x="8" y="8" width="24" height="24" rx="6"></rect><rect x="38" y="8" width="24" height="24" rx="6"></rect><rect x="68" y="8" width="24" height="24" rx="6"></rect><rect x="8" y="38" width="24" height="24" rx="6"></rect><rect x="38" y="38" width="24" height="24" rx="6"></rect><rect x="68" y="38" width="24" height="24" rx="6"></rect><rect x="8" y="68" width="24" height="24" rx="6"></rect><rect x="38" y="68" width="24" height="24" rx="6"></rect><rect x="68" y="68" width="24" height="24" rx="6" class="last"></rect></svg><span>Full<span class="brand-rota">Rota</span></span></a>
+    <nav class="nav" aria-label="Sections">
+      <a class="nav-link" href="#what">What it does</a>
+      <a class="nav-link" href="#compliance">Compliance</a>
+      <a class="nav-link" href="#setup">Setup</a>
+      <a class="nav-link" href="#brand">Your brand</a>
+      <a class="nav-link" href="#pricing">Pricing</a>
+      <a class="nav-link" href="#faq">FAQ</a>
+      <a class="btn" href="#demo">Book a demo</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="switch" role="group" aria-label="Show the example for">
+          <button type="button" id="sector-education" data-sector="education" aria-pressed="true">Education</button>
+          <button type="button" id="sector-healthcare" data-sector="healthcare" aria-pressed="false">Healthcare</button>
+        </div>
+        <h1 id="hero-title">
+          <span data-for="education">Morning cover, booked <mark>before the first bell.</mark></span>
+          <span data-for="healthcare" hidden>Tonight's shift, filled <mark>before handover.</mark></span>
+        </h1>
+        <p class="lede">FullRota is a recruitment CRM for staffing agencies in any specialism, with WhatsApp built in, set up in your sector's own language. Send a shift to every candidate who is free and cleared to work, book the first yes, and keep the whole conversation on their record.</p>
+        <div class="cta-row">
+          <a class="btn" href="#demo">Book a demo</a>
+          <a class="btn ghost" href="#what">See what it does</a>
+        </div>
+      </div>
+
+      <div class="panel" data-for="education">
+        <div class="panel-head">
+          <span class="label">Example booking</span>
+          <span class="label">Request to booking: 4 min</span>
+        </div>
+        <ol class="thread">
+          <li class="row">
+            <time>06:58</time>
+            <div class="body"><p class="notice"><strong>Hollybank Primary</strong> asks for a Year 4 class teacher, today, 08:30 to 15:30.</p></div>
+          </li>
+          <li class="row">
+            <time>06:59</time>
+            <div class="body">
+              <p class="bubble out">Hollybank Primary needs a Year 4 class teacher today, 08:30 to 15:30. Can you do it?</p>
+              <div class="replies" aria-label="Reply buttons"><span>Yes, book me</span><span>Not today</span></div>
+              <p class="sent-to">Sent to 14 teachers: free today, KS2, checks in date, within 10 miles.</p>
+            </div>
+          </li>
+          <li class="row">
+            <time>07:01</time>
+            <div class="body"><p class="bubble in"><span class="who">Priya M.</span>Yes, book me. Is there parking on site?</p></div>
+          </li>
+          <li class="row">
+            <time>07:02</time>
+            <div class="body">
+              <p class="booked"><mark>Booked: Priya M.</mark></p>
+              <p class="notice">School and teacher both have a confirmation. The other 13 have been told the day has gone.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="panel" data-for="healthcare" hidden>
+        <div class="panel-head">
+          <span class="label">Example booking</span>
+          <span class="label">Request to booking: 7 min</span>
+        </div>
+        <ol class="thread">
+          <li class="row">
+            <time>13:40</time>
+            <div class="body"><p class="notice"><strong>Elmfield Care Home</strong> asks for a registered nurse, tonight, 19:00 to 08:00.</p></div>
+          </li>
+          <li class="row">
+            <time>13:41</time>
+            <div class="body">
+              <p class="bubble out">Elmfield Care Home needs an RGN tonight, 19:00 to 08:00. Can you do it?</p>
+              <div class="replies" aria-label="Reply buttons"><span>Yes, book me</span><span>Not tonight</span></div>
+              <p class="sent-to">Sent to 9 nurses: free tonight, NMC PIN active, mandatory training in date.</p>
+            </div>
+          </li>
+          <li class="row">
+            <time>13:46</time>
+            <div class="body"><p class="bubble in"><span class="who">Daniel O.</span>Yes, book me. Same unit as last week?</p></div>
+          </li>
+          <li class="row">
+            <time>13:47</time>
+            <div class="body">
+              <p class="booked"><mark>Booked: Daniel O.</mark></p>
+              <p class="notice">Home and nurse both have a confirmation. The other 8 have been told the shift has gone.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Problem -->
+    <section aria-labelledby="problem-title">
+      <div class="section-head">
+        <h2 id="problem-title">Your agency already runs on WhatsApp. None of it is on the record.</h2>
+      </div>
+      <div class="three">
+        <div>
+          <h3>Bookings live on personal phones</h3>
+          <p>A consultant agrees a week of cover from their own number. Nobody else in the office can see it, so when they are off sick the desk starts from nothing.</p>
+        </div>
+        <div>
+          <h3>Candidates leave with the consultant</h3>
+          <p>When someone moves to a competitor, the chat history and the relationships behind it go with them.</p>
+        </div>
+        <div>
+          <h3>No trail when you are asked for one</h3>
+          <p>A school, a care home or an auditor wants to know who was told what, and when. Today the answer is a folder of screenshots.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- What it does -->
+    <section id="what" aria-labelledby="what-title">
+      <div class="section-head">
+        <p class="label">What it does</p>
+        <h2 id="what-title">Four jobs it takes off your consultants</h2>
+      </div>
+      <div class="four">
+        <div>
+          <h3>Shift broadcast</h3>
+          <p>Pick the booking. FullRota messages only the candidates who are available, qualified and cleared for that client. The first yes gets it, and everyone else is told it has gone.</p>
+        </div>
+        <div>
+          <h3>Availability check</h3>
+          <p>Every Sunday evening candidates are asked which days they can work. They tap an answer and the board fills itself in. Anyone who stays quiet gets one nudge on Monday morning.</p>
+        </div>
+        <div>
+          <h3>Compliance chasing</h3>
+          <p>Expiry dates sit on every record. Candidates are reminded ahead of time, with a link to upload the new document from their phone.</p>
+        </div>
+        <div>
+          <h3>Shared inbox</h3>
+          <p>One agency number for every consultant. Each message is filed against the candidate, so anyone on the desk can pick up the conversation.</p>
+        </div>
+      </div>
+
+      <figure class="board" data-for="education">
+        <p class="label">Example availability check, week of 12 October</p>
+        <div class="avail">
+          <div class="panel">
+            <div class="panel-head"><span class="label">Candidate's phone</span><span class="label">Sunday</span></div>
+            <ol class="thread">
+              <li class="row"><time>18:00</time><div class="body">
+                <p class="bubble out">Hi Priya, which days can you work next week, 12 to 16 October?</p>
+                <div class="replies" aria-label="Reply buttons"><span>All week</span><span>Some days</span><span>Not this week</span></div>
+              </div></li>
+              <li class="row"><time>18:06</time><div class="body"><p class="bubble in">Some days</p></div></li>
+              <li class="row"><time>18:06</time><div class="body">
+                <p class="bubble out">Thanks. Tick the days you're free.</p>
+                <div class="replies" aria-label="Reply buttons"><span>Choose days</span></div>
+              </div></li>
+              <li class="row"><time>18:07</time><div class="body">
+                <p class="notice">A short form opens inside WhatsApp.</p>
+                <div class="form-card" aria-label="Example form">
+                  <span class="form-title">Your days, 12 to 16 Oct</span>
+                  <span class="form-row">Mon <span class="muted">Booked with us</span></span>
+                  <span class="form-row">Tue <span class="box on" aria-label="ticked"></span></span>
+                  <span class="form-row">Wed <span class="box on" aria-label="ticked"></span></span>
+                  <span class="form-row">Thu <span class="box" aria-label="not ticked"></span></span>
+                  <span class="form-row">Fri <span class="box on" aria-label="ticked"></span></span>
+                  <span class="form-send">Send</span>
+                </div>
+              </div></li>
+              <li class="row"><time>18:07</time><div class="body"><p class="bubble in">Free: Tue, Wed, Fri</p></div></li>
+              <li class="row"><time>18:07</time><div class="body">
+                <p class="booked"><mark>Board updated</mark></p>
+                <p class="notice">Priya now shows as free on Tuesday, Wednesday and Friday.</p>
+              </div></li>
+            </ol>
+          </div>
+          <div class="board-scroll">
+          <table>
+            <thead>
+              <tr><th scope="col"><span class="label">Candidate</span></th><th scope="col">Mon</th><th scope="col">Tue</th><th scope="col">Wed</th><th scope="col">Thu</th><th scope="col">Fri</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Priya M.<small>KS2 teacher</small></th>
+                <td><span class="cell bkd">Booked</span></td><td><span class="cell free">Free</span></td><td><span class="cell free">Free</span></td><td><span class="cell off">Off</span></td><td><span class="cell free">Free</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Tom A.<small>Secondary maths</small></th>
+                <td><span class="cell free">Free</span></td><td><span class="cell free">Free</span></td><td><span class="cell bkd">Booked</span></td><td><span class="cell bkd">Booked</span></td><td><span class="cell off">Off</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Aisha K.<small>Teaching assistant, SEN</small></th>
+                <td><span class="cell free">AM only</span></td><td><span class="cell free">AM only</span></td><td><span class="cell free">AM only</span></td><td><span class="cell free">AM only</span></td><td><span class="cell free">AM only</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Callum R.<small>Cover supervisor</small></th>
+                <td><span class="cell unk">No reply</span></td><td><span class="cell unk">No reply</span></td><td><span class="cell unk">No reply</span></td><td><span class="cell unk">No reply</span></td><td><span class="cell unk">No reply</span></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <figcaption>Priya's answers land on the board as she sends them. Callum was nudged at 07:00 on Monday and is left out of broadcasts until he replies.</figcaption>
+      </figure>
+
+      <figure class="board" data-for="healthcare" hidden>
+        <p class="label">Example availability check, week of 12 October</p>
+        <div class="avail">
+          <div class="panel">
+            <div class="panel-head"><span class="label">Candidate's phone</span><span class="label">Sunday</span></div>
+            <ol class="thread">
+              <li class="row"><time>18:00</time><div class="body">
+                <p class="bubble out">Hi Daniel, which shifts can you work next week, 12 to 18 October?</p>
+                <div class="replies" aria-label="Reply buttons"><span>Every day</span><span>Some days</span><span>Not this week</span></div>
+              </div></li>
+              <li class="row"><time>18:03</time><div class="body"><p class="bubble in">Some days</p></div></li>
+              <li class="row"><time>18:03</time><div class="body">
+                <p class="bubble out">Thanks. Pick a shift for each day you're free.</p>
+                <div class="replies" aria-label="Reply buttons"><span>Choose shifts</span></div>
+              </div></li>
+              <li class="row"><time>18:05</time><div class="body">
+                <p class="notice">A short form opens inside WhatsApp.</p>
+                <div class="form-card" aria-label="Example form">
+                  <span class="form-title">Your shifts, 12 to 18 Oct</span>
+                  <span class="form-row">Mon <span class="pick on">Night</span></span>
+                  <span class="form-row">Tue <span class="pick on">Night</span></span>
+                  <span class="form-row">Wed <span class="pick off">Not free</span></span>
+                  <span class="form-row">Thu <span class="pick off">Not free</span></span>
+                  <span class="form-row">Fri <span class="muted">Booked with us</span></span>
+                  <span class="form-row">Sat <span class="pick on">Night</span></span>
+                  <span class="form-row">Sun <span class="pick off">Not free</span></span>
+                  <span class="form-send">Send</span>
+                </div>
+              </div></li>
+              <li class="row"><time>18:05</time><div class="body"><p class="bubble in">Nights: Mon, Tue, Sat</p></div></li>
+              <li class="row"><time>18:05</time><div class="body">
+                <p class="booked"><mark>Board updated</mark></p>
+                <p class="notice">Daniel now shows as free for nights on Monday, Tuesday and Saturday.</p>
+              </div></li>
+            </ol>
+          </div>
+          <div class="board-scroll">
+          <table>
+            <thead>
+              <tr><th scope="col"><span class="label">Candidate</span></th><th scope="col">Mon</th><th scope="col">Tue</th><th scope="col">Wed</th><th scope="col">Thu</th><th scope="col">Fri</th><th scope="col">Sat</th><th scope="col">Sun</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Daniel O.<small>Registered nurse</small></th>
+                <td><span class="cell free">Night</span></td><td><span class="cell free">Night</span></td><td><span class="cell off">Off</span></td><td><span class="cell off">Off</span></td><td><span class="cell bkd">Booked</span></td><td><span class="cell free">Night</span></td><td><span class="cell off">Off</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Grace N.<small>Healthcare assistant</small></th>
+                <td><span class="cell free">Early</span></td><td><span class="cell bkd">Booked</span></td><td><span class="cell free">Late</span></td><td><span class="cell off">Off</span></td><td><span class="cell off">Off</span></td><td><span class="cell free">Twilight</span></td><td><span class="cell free">Long day</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Marek S.<small>Senior carer</small></th>
+                <td><span class="cell off">Off</span></td><td><span class="cell free">Long day</span></td><td><span class="cell free">Long day</span></td><td><span class="cell bkd">Booked</span></td><td><span class="cell off">Off</span></td><td><span class="cell off">Off</span></td><td><span class="cell free">Long day</span></td>
+              </tr>
+              <tr>
+                <th scope="row">Lola B.<small>Mental health nurse</small></th>
+                <td><span class="cell unk">No reply</span></td><td><span class="cell unk">No reply</span></td><td><span class="cell unk">No reply</span></td><td><span class="cell unk">No reply</span></td><td><span class="cell unk">No reply</span></td><td><span class="cell unk">No reply</span></td><td><span class="cell unk">No reply</span></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <figcaption>Daniel's answers land on the board as he sends them. Lola was nudged at 07:00 on Monday and is left out of broadcasts until she replies. Shifts: Early 07:00–14:00, Late 13:00–20:00, Long day 07:00–20:00, Night 19:00–08:00, Twilight 19:00–02:00.</figcaption>
+      </figure>
+    </section>
+
+    <!-- Compliance -->
+    <section id="compliance" class="split" aria-labelledby="compliance-title">
+      <div class="comp-left">
+      <div class="section-head">
+        <p class="label">Compliance</p>
+        <h2 id="compliance-title">Nobody goes out on an expired check</h2>
+        <p class="lede" data-for="education">Every safer recruitment check has a date and a status on the candidate's record. When one runs out, the teacher drops out of broadcasts and gets a message asking for the new document.</p>
+        <p class="lede" data-for="healthcare" hidden>Every pre-employment check has a date and a status on the candidate's record. When one runs out, the nurse or carer drops out of broadcasts and gets a message asking for the new document.</p>
+        <p class="fine">FullRota tracks documents and chases candidates. The decision to clear someone for work stays with your compliance team.</p>
+      </div>
+
+      <div class="panel" data-for="education">
+        <div class="panel-head"><span class="label">Example DBS renewal</span><span class="label">Candidate's phone</span></div>
+        <ol class="thread">
+          <li class="row"><time>09:00</time><div class="body">
+            <p class="bubble out">Hi Priya, your DBS certificate will be a year old on 20 October. Our schools ask for a check from the last 12 months, so it's time for a new one.</p>
+            <div class="replies" aria-label="Reply buttons"><span>Start my DBS</span><span>Call me</span></div>
+          </div></li>
+          <li class="row"><time>09:12</time><div class="body"><p class="bubble in">Start my DBS</p></div></li>
+          <li class="row"><time>09:12</time><div class="body">
+            <p class="bubble out">Thanks. It takes about 10 minutes. Have your passport or driving licence ready, plus a recent bank statement or utility bill.</p>
+            <div class="replies" aria-label="Reply buttons"><span>Open application</span></div>
+          </div></li>
+          <li class="row"><time>09:25</time><div class="body">
+            <p class="notice">The application opens on her phone.</p>
+            <div class="form-card" aria-label="Example form">
+              <span class="form-title">DBS application</span>
+              <span class="form-row">Personal details <span class="box on" aria-label="done"></span></span>
+              <span class="form-row">Addresses, last 5 years <span class="box on" aria-label="done"></span></span>
+              <span class="form-row">Photo of ID <span class="box on" aria-label="done"></span></span>
+              <span class="form-row">Proof of address <span class="box on" aria-label="done"></span></span>
+              <span class="form-send">Submit</span>
+            </div>
+          </div></li>
+          <li class="row"><time>09:26</time><div class="body"><p class="bubble in">All done, submitted.</p></div></li>
+          <li class="row"><time>09:26</time><div class="body">
+            <p class="booked"><mark>Sent to compliance</mark></p>
+            <p class="notice">Your team checks her ID and sends the application to DBS. Her current check covers bookings until 20 October.</p>
+          </div></li>
+        </ol>
+      </div>
+
+      <div class="panel" data-for="healthcare" hidden>
+        <div class="panel-head"><span class="label">Example DBS renewal</span><span class="label">Candidate's phone</span></div>
+        <ol class="thread">
+          <li class="row"><time>09:00</time><div class="body">
+            <p class="bubble out">Hi Daniel, your DBS Update Service subscription is due for renewal on 24 October. If it lapses, you'll need a whole new DBS check.</p>
+            <div class="replies" aria-label="Reply buttons"><span>I've renewed</span><span>Remind me Friday</span></div>
+          </div></li>
+          <li class="row"><time>19:40</time><div class="body"><p class="bubble in">I've renewed</p></div></li>
+          <li class="row"><time>19:40</time><div class="body">
+            <p class="bubble out">Thanks Daniel. We'll check your certificate online and update your record.</p>
+          </div></li>
+          <li class="row"><time>08:45</time><div class="body">
+            <p class="notice">Next morning, your compliance team runs the online status check: <strong>no new information</strong>.</p>
+          </div></li>
+          <li class="row"><time>08:46</time><div class="body">
+            <p class="booked"><mark>Record updated</mark></p>
+            <p class="notice">Daniel's DBS shows as in date, and his next renewal reminder is set for October 2027.</p>
+          </div></li>
+        </ol>
+      </div>
+      </div>
+
+      <div class="record" data-for="education">
+        <div class="record-head"><strong>Priya M.</strong><span class="label">Example record · KS2 teacher</span></div>
+        <ul class="checks">
+          <li><span class="what">Right to work<span class="detail">British passport, seen in person</span></span><span class="chip ok">In date</span></li>
+          <li><span class="what">QTS and prohibition check<span class="detail">Teacher reference number on file</span></span><span class="chip ok">In date</span></li>
+          <li><span class="what">References<span class="detail">2 of 2 received</span></span><span class="chip ok">Complete</span></li>
+          <li><span class="what">Safeguarding training<span class="detail">Certificate valid until June 2027</span></span><span class="chip ok">In date</span></li>
+          <li><span class="what">Enhanced DBS with children's barred list<span class="detail">A year old on 20 Oct, not on the Update Service. New application submitted</span></span><span class="chip warn">Renewal due</span></li>
+          <li><span class="what">KCSIE Part 1 declaration<span class="detail">Not signed for this year's edition, chased today</span></span><span class="chip crit">Missing</span></li>
+        </ul>
+      </div>
+
+      <div class="record" data-for="healthcare" hidden>
+        <div class="record-head"><strong>Daniel O.</strong><span class="label">Example record · Registered nurse</span></div>
+        <ul class="checks">
+          <li><span class="what">Right to work<span class="detail">Share code verified</span></span><span class="chip ok">In date</span></li>
+          <li><span class="what">NMC registration<span class="detail">PIN active, revalidation due January 2027</span></span><span class="chip ok">In date</span></li>
+          <li><span class="what">Immunisation records<span class="detail">Hepatitis B and MMR on file</span></span><span class="chip ok">Complete</span></li>
+          <li><span class="what">References<span class="detail">2 of 2 received</span></span><span class="chip ok">Complete</span></li>
+          <li><span class="what">Enhanced DBS with adults' barred list<span class="detail">Update Service renewed, status check today: no new information</span></span><span class="chip ok">In date</span></li>
+          <li><span class="what">Mandatory training<span class="detail">Basic life support ran out 1 Oct, chased today</span></span><span class="chip crit">Expired</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Data -->
+    <section aria-labelledby="data-title">
+      <div class="section-head">
+        <p class="label">Data and consent</p>
+        <h2 id="data-title">Ready for the questions clients and auditors ask</h2>
+      </div>
+      <div class="two">
+        <div>
+          <h3>Consent on record</h3>
+          <p>Each candidate opts in to WhatsApp messages from your agency, and the date they did so is stored.</p>
+        </div>
+        <div>
+          <h3>Full message history</h3>
+          <p>Export any candidate's conversation with timestamps, including which consultant sent each message.</p>
+        </div>
+        <div>
+          <h3>Retention rules</h3>
+          <p>Set how long to keep records for candidates who have stopped working with you, then delete them on schedule.</p>
+        </div>
+        <div>
+          <h3>Official WhatsApp route</h3>
+          <p>Messages go out from your agency's own number through the WhatsApp Business Platform, with approved templates.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Setup -->
+    <section id="setup" aria-labelledby="setup-title">
+      <div class="section-head">
+        <p class="label">Setup</p>
+        <h2 id="setup-title">We set it up for you</h2>
+        <p class="lede">Small agencies do not have a spare week for a software migration. You send us what you have and we do the rest.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h3>Send us your candidate list</h3>
+          <p>A spreadsheet or an export from your current system is fine. We load it, with check dates where you have them.</p>
+        </li>
+        <li>
+          <h3>We connect your number</h3>
+          <p>Your agency's WhatsApp number is linked and your shift, availability and reminder messages are written and approved.</p>
+        </li>
+        <li>
+          <h3>Your desk logs in</h3>
+          <p>Consultants sign in on the web or the app. Candidates opt in with one reply and the first availability check goes out that Sunday.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Your brand -->
+    <section id="brand" aria-labelledby="brand-title">
+      <div class="section-head">
+        <p class="label">Your brand</p>
+        <h2 id="brand-title">Candidates see your agency, not ours</h2>
+        <p class="lede">Messages go out from your own WhatsApp number with your name, logo and colours. FullRota stays in the background.</p>
+      </div>
+      <div class="brand-grid">
+        <figure class="brand-shot">
+          <img src="assets/branded-whatsapp.png" width="760" height="740" alt="Two phone screens. On the left, a WhatsApp chat from Northgate Supply with its logo at the top, a blue and amber banner on the availability message, and a small grey footer line. On the right, an availability form in Northgate's colours with a small Powered by Shiftbell credit at the bottom.">
+          <figcaption class="fine">Northgate Supply is an invented example agency. Real WhatsApp screens look slightly different on iPhone and Android.</figcaption>
+        </figure>
+        <ol class="brand-points">
+          <li><span class="num" aria-hidden="true">1</span><div><h3>Your name and logo</h3><p>Your logo and approved business name sit at the top of every chat. Verified businesses also show a badge next to the name.</p></div></li>
+          <li><span class="num" aria-hidden="true">2</span><div><h3>Branded headers</h3><p>Add your own banner to regular messages such as the Sunday availability check, so candidates spot them straight away.</p></div></li>
+          <li><span class="num" aria-hidden="true">3</span><div><h3>A quiet footer</h3><p>Each message ends with one line of small grey text: your agency's name, with a small "via FullRota" credit.</p></div></li>
+          <li><span class="num" aria-hidden="true">4</span><div><h3>Forms in your colours</h3><p>Availability and document forms open inside the chat in your colours and with your logo.</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" aria-labelledby="pricing-title">
+      <div class="section-head">
+        <p class="label">Pricing</p>
+        <h2 id="pricing-title">Priced by the size of your desk</h2>
+        <p class="lede">Every plan includes setup support, the shared inbox, shift broadcasts, availability checks and compliance chasing. Monthly rolling, or pay annually and get two months free.</p>
+      </div>
+      <div class="plans">
+        <div class="plan">
+          <div class="plan-top">
+            <h3>Starter</h3>
+            <p class="plan-for">For agencies with up to 3 consultants</p>
+          </div>
+          <p class="price"><span class="amount">£149</span><span class="per">a month</span></p>
+          <ul class="plan-list">
+            <li>Up to 3 consultants</li>
+            <li>Up to 400 active candidates</li>
+            <li>2,000 WhatsApp messages a month</li>
+            <li>Extra messages 5p each</li>
+          </ul>
+          <a class="btn ghost" href="#demo">Book a demo</a>
+        </div>
+        <div class="plan featured">
+          <div class="plan-top">
+            <h3>Growth</h3>
+            <p class="plan-for">For agencies with up to 8 consultants</p>
+          </div>
+          <p class="price"><span class="amount">£349</span><span class="per">a month</span></p>
+          <ul class="plan-list">
+            <li>Up to 8 consultants</li>
+            <li>Up to 1,500 active candidates</li>
+            <li>6,000 WhatsApp messages a month</li>
+            <li>Extra messages 4p each</li>
+          </ul>
+          <a class="btn" href="#demo">Book a demo</a>
+        </div>
+        <div class="plan">
+          <div class="plan-top">
+            <h3>Larger agencies</h3>
+            <p class="plan-for">For 9 or more consultants</p>
+          </div>
+          <p class="price"><span class="amount">From £40</span><span class="per">per consultant a month</span></p>
+          <ul class="plan-list">
+            <li>Unlimited active candidates</li>
+            <li>Message allowance agreed with you</li>
+            <li>Several offices or brands</li>
+            <li>Named account contact</li>
+          </ul>
+          <a class="btn ghost" href="#demo">Ask for a quote</a>
+        </div>
+      </div>
+      <div class="price-notes">
+        <p><strong>Setup from £495, one-off.</strong> We import your candidates, connect your WhatsApp number, write and get your message templates approved, and train your consultants.</p>
+        <p class="founding"><mark>Founding agencies:</mark> our first five agencies pay no setup fee and £99 a month, fixed for 12 months, in return for regular feedback.</p>
+        <p class="fine">All prices exclude VAT. An active candidate is anyone you have messaged or booked in the last 90 days. Replies to candidates who message you first are not counted against your allowance.</p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" aria-labelledby="faq-title">
+      <div class="section-head">
+        <p class="label">FAQ</p>
+        <h2 id="faq-title">Questions agencies ask</h2>
+      </div>
+      <div class="faqs">
+        <details class="faq" open>
+          <summary id="faq-1">How many WhatsApp numbers can I have?</summary>
+          <div class="faq-a"><p>It's your choice. Most agencies use one number for the whole business, so candidates always know who is messaging them.</p><p>You can add more whenever it suits you: one per branch, one per brand, or a separate number for each sector you cover. Each number shows its own name and logo in WhatsApp, and your team sees every conversation in one shared inbox. We set up and get each number approved with WhatsApp for you.</p></div>
+        </details>
+        <details class="faq">
+          <summary id="faq-sector">Does FullRota work for our sector?</summary>
+          <div class="faq-a"><p>Yes. The examples on this page are education and healthcare, but FullRota is set up for each agency's specialism, whether that's nursing, teaching, social care, driving, hospitality, security or something else. We configure your roles, shift or booking patterns, compliance checks and rates, usually within a week.</p><p>Your team, candidates and clients see your sector's own words throughout, in the app and in WhatsApp messages. If you'd rather say "carer", "home" or "session", your admin can change the wording at any time, and agencies covering several sectors can use different wording for each desk.</p></div>
+        </details>
+        <details class="faq">
+          <summary id="faq-2">Can we keep the WhatsApp number we already use?</summary>
+          <div class="faq-a"><p>Usually, yes. If your number is already on the WhatsApp Business app, it can normally be moved across. We check this with you during setup, before anything changes.</p></div>
+        </details>
+        <details class="faq">
+          <summary id="faq-3">Do candidates need to download anything?</summary>
+          <div class="faq-a"><p>No. They use the WhatsApp they already have. Forms open inside the chat, and there is nothing to install or log in to.</p></div>
+        </details>
+        <details class="faq">
+          <summary id="faq-4">Do candidates have to agree to receive messages?</summary>
+          <div class="faq-a"><p>Yes. Each candidate opts in before you message them, and the date is saved on their record. They can stop messages at any time.</p></div>
+        </details>
+        <details class="faq">
+          <summary id="faq-5">Can other agencies on FullRota see my candidates?</summary>
+          <div class="faq-a"><p>No. Every agency has its own separate space. Your candidates, messages and documents are only visible to your team and to the clients you invite.</p></div>
+        </details>
+        <details class="faq">
+          <summary id="faq-6">Can our schools and care homes log in?</summary>
+          <div class="faq-a"><p>Yes, if you want them to. Clients can see people who have worked with them before, check who is free and send an invite, which goes out on WhatsApp from your number. You are told about every invite.</p></div>
+        </details>
+        <details class="faq">
+          <summary id="faq-7">Who owns our data?</summary>
+          <div class="faq-a"><p>You do. FullRota handles it on your behalf under a data processing agreement, and you can export or delete your data whenever you like.</p></div>
+        </details>
+        <details class="faq">
+          <summary id="faq-8">What happens if we go over our message allowance?</summary>
+          <div class="faq-a"><p>Nothing stops working. Extra messages cost 5p each on Starter and 4p each on Growth, and you can see your usage at any time. Replies to candidates who message you first don't count towards your allowance.</p></div>
+        </details>
+        <details class="faq">
+          <summary id="faq-9">Is there a long contract?</summary>
+          <div class="faq-a"><p>No. Plans run month to month. If you pay for a year up front, you get two months free.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Demo -->
+    <section id="demo" class="demo" aria-labelledby="demo-title">
+      <p class="label">Book a demo</p>
+      <h2 id="demo-title">See it run on one of your own bookings</h2>
+      <p class="lede">The call takes 20 minutes. Bring a vacancy you filled last week and we will show you how it would have gone out.</p>
+      <div class="contact">
+        <a class="address" id="demo-address" href="mailto:hello@fullrota.com">hello@fullrota.com</a>
+        <button type="button" class="btn" id="copy-address">Copy address</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-foot">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="brand" href="#page"><svg class="bm" viewBox="0 0 100 100" aria-hidden="true"><rect x="8" y="8" width="24" height="24" rx="6"></rect><rect x="38" y="8" width="24" height="24" rx="6"></rect><rect x="68" y="8" width="24" height="24" rx="6"></rect><rect x="8" y="38" width="24" height="24" rx="6"></rect><rect x="38" y="38" width="24" height="24" rx="6"></rect><rect x="68" y="38" width="24" height="24" rx="6"></rect><rect x="8" y="68" width="24" height="24" rx="6"></rect><rect x="38" y="68" width="24" height="24" rx="6"></rect><rect x="68" y="68" width="24" height="24" rx="6" class="last"></rect></svg><span>Full<span class="brand-rota">Rota</span></span></a>
+        <p class="foot-by">A service from Kinetic Flow Limited</p>
+      </div>
+      <nav class="foot-links" aria-label="Legal and company">
+        <a href="privacy.html">Privacy policy</a>
+        <a href="privacy.html#cookies">Cookies</a>
+        <a href="terms.html">Terms</a>
+        <a href="contact.html">Contact us</a>
+      </nav>
+    </div>
+    <div class="foot-legal">
+      <p>© 2026 Kinetic Flow Limited. Registered in England and Wales, company number 17526373. Registered office: 3 Gainsborough Court, Skipton, England, BD23 1QG.</p>
+      <p>WhatsApp is a trademark of Meta Platforms. FullRota is an independent product and is not affiliated with Meta.</p>
+      <p>Names, schools, care homes and records shown on this page are invented examples.</p>
+    </div>
+  </footer>
+</div>
+
+<div class="robbie" id="robbie">
+  <section class="robbie-panel" id="robbie-panel" hidden aria-label="Chat with Robbie">
+    <header class="robbie-head">
+      <svg class="rb" viewBox="0 0 100 100" width="36" height="36" aria-hidden="true"><path d="M50 23 V12" class="rb-line"></path><circle cx="50" cy="10" r="7" class="rb-ball"></circle><rect x="13" y="23" width="74" height="56" rx="20" class="rb-face"></rect><path d="M28 74 L22 93 L47 78 Z" class="rb-face"></path><circle cx="37" cy="47" r="6.5" class="rb-eye"></circle><circle cx="63" cy="47" r="6.5" class="rb-eye"></circle><path d="M38 60 Q50 70 62 60" class="rb-smile"></path></svg>
+      <div class="robbie-title"><strong>Robbie</strong><span>FullRota assistant</span></div>
+      <button type="button" class="robbie-x" id="robbie-close" aria-label="Close chat">×</button>
+    </header>
+    <div class="robbie-log" id="robbie-log" role="log" aria-live="polite"></div>
+    <div class="robbie-chips" id="robbie-chips"></div>
+    <form class="robbie-form" id="robbie-form" autocomplete="off">
+      <label class="sr-only" for="robbie-input">Ask Robbie a question</label>
+      <input id="robbie-input" type="text" placeholder="Ask about pricing, WhatsApp, compliance…">
+      <button type="submit" class="robbie-send" aria-label="Send">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+    </form>
+    <div class="robbie-foot">
+      <button type="button" class="robbie-human" id="robbie-human">Speak to a human</button>
+      <span>Robbie answers from this website.</span>
+    </div>
+  </section>
+  <button type="button" class="robbie-fab" id="robbie-open" aria-expanded="false" aria-controls="robbie-panel">
+    <svg class="rb" viewBox="0 0 100 100" width="34" height="34" aria-hidden="true"><path d="M50 23 V12" class="rb-line"></path><circle cx="50" cy="10" r="7" class="rb-ball"></circle><rect x="13" y="23" width="74" height="56" rx="20" class="rb-face"></rect><path d="M28 74 L22 93 L47 78 Z" class="rb-face"></path><circle cx="37" cy="47" r="6.5" class="rb-eye"></circle><circle cx="63" cy="47" r="6.5" class="rb-eye"></circle><path d="M38 60 Q50 70 62 60" class="rb-smile"></path></svg><span>Ask Robbie</span>
+  </button>
+</div>
+
+
+<script>
+(function () {
+  var page = document.getElementById('page');
+  var buttons = page.querySelectorAll('.switch button');
+
+  function setSector(sector) {
+    page.dataset.sector = sector;
+    page.querySelectorAll('[data-for]').forEach(function (el) {
+      el.hidden = el.dataset.for !== sector;
+    });
+    buttons.forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.sector === sector));
+    });
+  }
+
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () { setSector(b.dataset.sector); });
+  });
+
+  if (location.hash === '#healthcare') setSector('healthcare');
+
+  var copyBtn = document.getElementById('copy-address');
+  var address = document.getElementById('demo-address');
+  copyBtn.addEventListener('click', function () {
+    var text = address.textContent.trim();
+    function done() {
+      copyBtn.textContent = 'Copied';
+      setTimeout(function () { copyBtn.textContent = 'Copy address'; }, 1800);
+    }
+    function fallback() {
+      var range = document.createRange();
+      range.selectNodeContents(address);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      copyBtn.textContent = 'Selected';
+      setTimeout(function () { copyBtn.textContent = 'Copy address'; }, 1800);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(fallback);
+    } else {
+      fallback();
+    }
+  });
+})();
+</script>
+
+<script>
+(function () {
+  var EMAIL = 'hello@fullrota.com';
+  var panel = document.getElementById('robbie-panel');
+  var openBtn = document.getElementById('robbie-open');
+  var closeBtn = document.getElementById('robbie-close');
+  var log = document.getElementById('robbie-log');
+  var chips = document.getElementById('robbie-chips');
+  var form = document.getElementById('robbie-form');
+  var input = document.getElementById('robbie-input');
+  var started = false;
+
+  var answers = [
+    { keys: ['human', 'person', 'someone', 'speak', 'talk', 'call me', 'phone', 'contact'], human: true },
+    { keys: ['price', 'pricing', 'cost', 'how much', 'plan', 'fee', 'subscription', '£'],
+      text: ['Starter is £149 a month for up to 3 consultants. Growth is £349 a month for up to 8. Larger agencies start from £40 per consultant a month.', 'Setup starts from £495, one-off. Our first five founding agencies pay no setup fee and £99 a month, fixed for 12 months.'],
+      link: ['#pricing', 'See pricing'] },
+    { keys: ['keep', 'existing number', 'current number', 'same number', 'already use'],
+      text: ['Usually, yes. If your number is already on the WhatsApp Business app, it can normally be moved across. We check this with you during setup, before anything changes.'] },
+    { keys: ['how many', 'numbers', 'number'],
+      text: ["It's your choice. Most agencies use one number for the whole business, but you can add more for each branch, brand or sector, such as one for education and one for healthcare.", 'Your team sees every conversation in one shared inbox, and we get each number approved with WhatsApp for you.'] },
+    { keys: ['allowance', 'extra message', 'go over', 'message cost', 'per message'],
+      text: ['Nothing stops working. Extra messages cost 5p each on Starter and 4p each on Growth, and you can see your usage at any time.'] },
+    { keys: ['download', 'install', 'app for candidates', 'need an app'],
+      text: ['Candidates don’t need to download anything. They use the WhatsApp they already have, and forms open inside the chat.'] },
+    { keys: ['opt', 'consent', 'agree', 'unsubscribe', 'stop messages'],
+      text: ['Each candidate opts in before you message them, and the date is saved on their record. They can stop messages at any time.'] },
+    { keys: ['other agencies', 'competitor', 'private', 'see my candidates', 'separate'],
+      text: ['No other agency can see your candidates. Every agency has its own separate space on FullRota.'] },
+    { keys: ['school', 'care home', 'client', 'portal', 'log in', 'login'],
+      text: ['Agencies can give their schools and care homes their own login. Clients see people who have worked with them before, check who is free and send an invite, which goes out on WhatsApp from your number.'] },
+    { keys: ['gdpr', 'data', 'own', 'export', 'delete'],
+      text: ['Your data belongs to you. FullRota handles it on your behalf under a data processing agreement, and you can export or delete it whenever you like.'] },
+    { keys: ['contract', 'cancel', 'notice', 'tie in', 'tied in'],
+      text: ['Plans run month to month, with no long contract. Pay for a year up front and you get two months free.'] },
+    { keys: ['dbs', 'compliance', 'right to work', 'training', 'expire', 'nmc', 'kcsie', 'check'],
+      text: ['FullRota keeps a date and status for every check: DBS, right to work, training, NMC registration and more. Candidates get reminders before anything runs out, and anyone with an expired check is left out of shift offers.', 'The decision to clear someone for work always stays with your compliance team.'],
+      link: ['#compliance', 'See compliance'] },
+    { keys: ['availability', 'available', 'sunday', 'free days', 'rota'],
+      text: ['Every Sunday evening candidates get a WhatsApp message asking which days or shifts they can work. Most tap "Same as last week", and the availability board updates itself.'],
+      link: ['#what', 'See how it works'] },
+    { keys: ['shift', 'broadcast', 'fill', 'book', 'cover'],
+      text: ['Pick a booking and FullRota messages only the candidates who are free, qualified and cleared for that client. The first yes gets it, and everyone else is told it has gone.'] },
+    { keys: ['brand', 'logo', 'white label', 'our name'],
+      text: ['Candidates see your agency’s name, logo and colours in WhatsApp. FullRota stays in the background, with a small credit in the message footer.'],
+      link: ['#brand', 'See branding'] },
+    { keys: ['demo', 'trial', 'start', 'set up', 'setup', 'onboard', 'sign up'],
+      text: ['We set everything up for you: import your candidates, connect your WhatsApp number and train your team. A demo takes 20 minutes, and you can bring a real vacancy.'],
+      link: ['#demo', 'Book a demo'] },
+    { keys: ['hello', 'hi', 'hey', 'morning', 'afternoon'],
+      text: ['Hello! What would you like to know about FullRota?'] }
+  ];
+  var starters = ['How much does it cost?', 'How many WhatsApp numbers can I have?', 'How does compliance work?', 'Book a demo'];
+
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
+  function scroll() { log.scrollTop = log.scrollHeight; }
+  function say(who, paras, link) {
+    var m = el('div', 'rmsg ' + who);
+    paras.forEach(function (t) { m.appendChild(el('p', '', t)); });
+    if (link) {
+      var p = el('p'); var a = el('a', '', link[1] + ' →'); a.href = link[0];
+      a.addEventListener('click', function () { closePanel(); });
+      p.appendChild(a); m.appendChild(p);
+    }
+    log.appendChild(m); scroll();
+  }
+  function setChips(list) {
+    chips.innerHTML = '';
+    list.forEach(function (q) {
+      var b = el('button', '', q); b.type = 'button';
+      b.addEventListener('click', function () { ask(q); });
+      chips.appendChild(b);
+    });
+  }
+  function humanCard() {
+    var m = el('div', 'rmsg bot human-card');
+    m.appendChild(el('p', '', 'Of course. Email the FullRota team and a person will get back to you, or book a 20-minute demo call.'));
+    var addr = el('span', 'addr', EMAIL); m.appendChild(addr);
+    var row = el('div', 'row');
+    var copy = el('button', 'mini-btn solid', 'Copy email address'); copy.type = 'button';
+    copy.addEventListener('click', function () {
+      function done() { copy.textContent = 'Copied'; setTimeout(function () { copy.textContent = 'Copy email address'; }, 1800); }
+      function fallback() { var r = document.createRange(); r.selectNodeContents(addr); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); copy.textContent = 'Selected'; }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(EMAIL).then(done).catch(fallback); else fallback();
+    });
+    var demo = el('a', 'mini-btn', 'Book a demo'); demo.href = '#demo';
+    demo.addEventListener('click', function () { closePanel(); });
+    row.appendChild(copy); row.appendChild(demo); m.appendChild(row);
+    log.appendChild(m); scroll();
+  }
+  function match(q) {
+    var t = ' ' + q.toLowerCase() + ' ';
+    for (var i = 0; i < answers.length; i++) {
+      for (var k = 0; k < answers[i].keys.length; k++) {
+        var key = answers[i].keys[k];
+        var re = new RegExp('(^|[^a-z])' + key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '([^a-z]|$)');
+        if (key.length > 3 ? t.indexOf(key) !== -1 : re.test(t)) return answers[i];
+      }
+    }
+    return null;
+  }
+  function ask(q) {
+    q = q.trim(); if (!q) return;
+    say('me', [q]);
+    var typing = el('div', 'rmsg bot typing', 'Robbie is typing…'); log.appendChild(typing); scroll();
+    setTimeout(function () {
+      typing.remove();
+      var a = match(q);
+      if (a && a.human) { humanCard(); setChips(starters); return; }
+      if (a) { say('bot', a.text, a.link); setChips(['Something else']); return; }
+      say('bot', ["I'm not sure about that one yet. I can help with pricing, WhatsApp numbers, compliance, availability and setup.", 'Or you can speak to a person from the team.']);
+      setChips(starters);
+    }, 450);
+  }
+  function openPanel() {
+    panel.hidden = false; openBtn.setAttribute('aria-expanded', 'true');
+    if (!started) {
+      started = true;
+      say('bot', ["Hi, I'm Robbie, FullRota's assistant.", 'Ask me about pricing, WhatsApp numbers, compliance or getting set up. If you would rather talk to a person, tap "Speak to a human" at any time.']);
+      setChips(starters);
+    }
+    setTimeout(function () { input.focus(); }, 0);
+  }
+  function closePanel() { panel.hidden = true; openBtn.setAttribute('aria-expanded', 'false'); openBtn.focus(); }
+
+  openBtn.addEventListener('click', openPanel);
+  closeBtn.addEventListener('click', closePanel);
+  document.getElementById('robbie-human').addEventListener('click', function () { say('me', ['Speak to a human']); humanCard(); });
+  form.addEventListener('submit', function (e) { e.preventDefault(); var q = input.value; input.value = ''; if (q.trim() === 'Something else') { setChips(starters); return; } ask(q); });
+  chips.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.textContent === 'Something else') { e.stopImmediatePropagation(); setChips(starters); say('bot', ['Sure, what else would you like to know?']); }
+  }, true);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !panel.hidden ) closePanel(); });
+})();
+</script>
+
+</body></html>
