@@ -1013,7 +1013,7 @@ footer { border-top: 1px solid var(--line); padding-block: 28px 40px; font-size:
       <div class="faqs">
         <details class="faq" open>
           <summary id="faq-1">How many WhatsApp numbers can I have?</summary>
-          <div class="faq-a"><p>It's your choice. Most agencies use one number for the whole business, so candidates always know who is messaging them.</p><p>You can add more whenever it suits you: one per branch, one per brand, or a separate number for each sector you cover. Each number shows its own name and logo in WhatsApp, and your team sees every conversation in one shared inbox. We set up and get each number approved with WhatsApp for you.</p></div>
+          <div class="faq-a"><p>Most agencies connect one main number for the whole business, so candidates always know who is messaging them.</p><p>You can connect more when it suits you, such as a number for a branch or brand, or your consultants' own WhatsApp Business numbers, one at a time. Meta allows 2 numbers until your business is verified with Meta, then 20. Each number shows its own name and logo in WhatsApp, and your team sees every conversation in one shared inbox.</p></div>
         </details>
         <details class="faq">
           <summary id="faq-sector">Does FullRota work for our sector?</summary>
@@ -1021,7 +1021,11 @@ footer { border-top: 1px solid var(--line); padding-block: 28px 40px; font-size:
         </details>
         <details class="faq">
           <summary id="faq-2">Can we keep the WhatsApp number we already use?</summary>
-          <div class="faq-a"><p>Usually, yes. If your number is already on the WhatsApp Business app, it can normally be moved across. We check this with you during setup, before anything changes.</p></div>
+          <div class="faq-a"><p>Yes. If your number is on the WhatsApp Business app, you connect it to FullRota and keep using the app on your phone as normal. Both stay in sync, and your contacts and up to 6 months of one-to-one chats copy across once.</p><p>Personal WhatsApp numbers (the ordinary green app) need to switch to the free WhatsApp Business app first.</p></div>
+        </details>
+        <details class="faq">
+          <summary id="faq-disconnect">Can we disconnect a number later?</summary>
+          <div class="faq-a"><p>Yes. Click Disconnect next to the number in FullRota and it stops sending and receiving straight away. To fully unlink it from Meta, also go to Settings, then Account, then Business Platform, then Disconnect Account in the WhatsApp Business app. The app on the phone carries on working either way.</p></div>
         </details>
         <details class="faq">
           <summary id="faq-3">Do candidates need to download anything?</summary>
@@ -1175,14 +1179,24 @@ footer { border-top: 1px solid var(--line); padding-block: 28px 40px; font-size:
   var started = false;
 
   var answers = [
-    { keys: ['human', 'person', 'someone', 'speak', 'talk', 'call me', 'phone', 'contact'], human: true },
+    { keys: ['human', 'a person', 'real person', 'someone', 'speak', 'talk', 'call me', 'phone', 'contact'], human: true },
     { keys: ['price', 'pricing', 'cost', 'how much', 'plan', 'fee', 'subscription', '£'],
       text: ['Starter is £149 a month for up to 3 consultants. Growth is £349 a month for up to 8. Larger agencies start from £40 per consultant a month.', 'Setup starts from £495, one-off. Our first five founding agencies pay no setup fee and £99 a month, fixed for 12 months.'],
       link: ['#pricing', 'See pricing'] },
-    { keys: ['keep', 'existing number', 'current number', 'same number', 'already use'],
-      text: ['Usually, yes. If your number is already on the WhatsApp Business app, it can normally be moved across. We check this with you during setup, before anything changes.'] },
-    { keys: ['how many', 'numbers', 'number'],
-      text: ["It's your choice. Most agencies use one number for the whole business, but you can add more for each branch, brand or sector, such as one for education and one for healthcare.", 'Your team sees every conversation in one shared inbox, and we get each number approved with WhatsApp for you.'] },
+    // WhatsApp-number answers come from the same explainer the FullRota app shows next to
+    // its Connect WhatsApp button (see EXPLAINER_URL). "text" is only a fallback.
+    { keys: ['disconnect', 'remove', 'unlink', 'delete a number', 'delete number', 'stop using'],
+      explainer: 'removing',
+      text: ['Click Disconnect next to the number in FullRota and it stops straight away. To fully unlink it from Meta, also use Disconnect Account in the WhatsApp Business app settings.'] },
+    { keys: ['14 days', 'disconnected', 'group', 'calls', 'broadcast', 'version', 'pay meta', 'meta charge'],
+      explainer: 'good-to-know',
+      text: ['Use the WhatsApp Business app on each connected phone at least once every 14 days, or Meta disconnects the number. Group chats and calls stay in the phone app.'] },
+    { keys: ['consultant', 'personal whatsapp', 'personal number', 'how many', 'more than one', 'numbers', 'branch'],
+      explainer: 'consultants',
+      text: ['Most agencies connect one main number. Consultants with their own WhatsApp Business number can connect theirs too, one at a time. Meta allows 2 numbers until your business is verified, then 20.'] },
+    { keys: ['keep', 'existing number', 'current number', 'same number', 'already use', 'business app', 'number', 'connect'],
+      explainer: 'main-number',
+      text: ['Yes. Connect the number you already use in the WhatsApp Business app, and keep using the app on your phone as normal. Both stay in sync.'] },
     { keys: ['allowance', 'extra message', 'go over', 'message cost', 'per message'],
       text: ['Nothing stops working. Extra messages cost 5p each on Starter and 4p each on Growth, and you can see your usage at any time.'] },
     { keys: ['download', 'install', 'app for candidates', 'need an app'],
@@ -1263,6 +1277,22 @@ footer { border-top: 1px solid var(--line); padding-block: 28px 40px; font-size:
     }
     return null;
   }
+  var EXPLAINER_URL = 'https://app.fullrota.com/content/whatsapp-explainer.json';
+  var explainer = null;
+  function loadExplainer() {
+    if (!explainer) {
+      explainer = fetch(EXPLAINER_URL, { credentials: 'omit' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; });
+    }
+    return explainer;
+  }
+  function sayExplainer(a) {
+    loadExplainer().then(function (ex) {
+      var sec = ex && ex.sections && ex.sections.find(function (s) { return s.id === a.explainer; });
+      say('bot', sec && sec.paragraphs && sec.paragraphs.length ? sec.paragraphs : a.text, a.link);
+    });
+  }
   function ask(q) {
     q = q.trim(); if (!q) return;
     say('me', [q]);
@@ -1271,6 +1301,7 @@ footer { border-top: 1px solid var(--line); padding-block: 28px 40px; font-size:
       typing.remove();
       var a = match(q);
       if (a && a.human) { humanCard(); setChips(starters); return; }
+      if (a && a.explainer) { sayExplainer(a); setChips(['Something else']); return; }
       if (a) { say('bot', a.text, a.link); setChips(['Something else']); return; }
       say('bot', ["I'm not sure about that one yet. I can help with pricing, WhatsApp numbers, compliance, availability and setup.", 'Or you can speak to a person from the team.']);
       setChips(starters);
@@ -1278,6 +1309,7 @@ footer { border-top: 1px solid var(--line); padding-block: 28px 40px; font-size:
   }
   function openPanel() {
     panel.hidden = false; openBtn.setAttribute('aria-expanded', 'true');
+    loadExplainer();
     if (!started) {
       started = true;
       say('bot', ["Hi, I'm Robbie, FullRota's assistant.", 'Ask me about pricing, WhatsApp numbers, compliance or getting set up. If you would rather talk to a person, tap "Speak to a human" at any time.']);
