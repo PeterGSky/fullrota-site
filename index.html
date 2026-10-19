@@ -469,6 +469,8 @@ main { display: flex; flex-direction: column; gap: clamp(72px, 10vw, 128px); pad
 .robbie-title span { font-size: 0.8125rem; color: var(--ink-soft); }
 .robbie-x { width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; color: var(--ink-soft); font-size: 1.5rem; cursor: pointer; }
 .robbie-x:hover { background: var(--paper); }
+.robbie-panel[hidden] { display: none; }
+@media (max-width: 600px) { .robbie-panel { height: min(70vh, 32rem); } }
 .robbie-log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--thread); }
 .rmsg { max-width: 88%; padding: 0.6em 0.85em; border-radius: 14px; font-size: 0.9375rem; line-height: 1.45; }
 .rmsg p { margin: 0; }
@@ -1091,7 +1093,7 @@ footer { border-top: 1px solid var(--line); padding-block: 28px 40px; font-size:
     <header class="robbie-head">
       <svg class="rb" viewBox="0 0 100 100" width="36" height="36" aria-hidden="true"><path d="M50 23 V12" class="rb-line"></path><circle cx="50" cy="10" r="7" class="rb-ball"></circle><rect x="13" y="23" width="74" height="56" rx="20" class="rb-face"></rect><path d="M28 74 L22 93 L47 78 Z" class="rb-face"></path><circle cx="37" cy="47" r="6.5" class="rb-eye"></circle><circle cx="63" cy="47" r="6.5" class="rb-eye"></circle><path d="M38 60 Q50 70 62 60" class="rb-smile"></path></svg>
       <div class="robbie-title"><strong>Robbie</strong><span>FullRota assistant</span></div>
-      <button type="button" class="robbie-x" id="robbie-close" aria-label="Close chat">×</button>
+      <button type="button" class="robbie-x" id="robbie-close" aria-label="Minimise chat" title="Minimise">–</button>
     </header>
     <div class="robbie-log" id="robbie-log" role="log" aria-live="polite"></div>
     <div class="robbie-chips" id="robbie-chips"></div>
