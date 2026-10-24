@@ -433,6 +433,8 @@ main { display: flex; flex-direction: column; gap: clamp(72px, 10vw, 128px); pad
 .foot-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .foot-legal { display: flex; flex-direction: column; gap: 6px; font-size: 0.8125rem; color: var(--ink-soft); }
 .foot-legal p { margin: 0; }
+.trust { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2px 0; }
+.trust li:not(:last-child)::after { content: "·"; margin-inline: 0.6em; }
 
 /* Login modal */
 .modal { position: fixed; inset: 0; z-index: 50; background: var(--overlay); display: grid; place-items: center; padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); }
@@ -1086,6 +1088,12 @@ footer { border-top: 1px solid var(--line); padding-block: 28px 40px; font-size:
       </nav>
     </div>
     <div class="foot-legal">
+      <ul class="trust" aria-label="About Kinetic Flow Limited">
+        <li>ICO registered (ZC277693)</li>
+        <li>UK registered company 17526373</li>
+        <li>Hosted in London, UK</li>
+      </ul>
+      <p>Member of the Microsoft AI Cloud Partner Program</p>
       <p>© 2026 Kinetic Flow Limited. Registered in England and Wales, company number 17526373. Registered office: 3 Gainsborough Court, Skipton, England, BD23 1QG. ICO registration ZC277693.</p>
       <p>WhatsApp is a trademark of Meta Platforms. FullRota is an independent product and is not affiliated with Meta.</p>
       <p>Names, schools, care homes and records shown on this page are invented examples.</p>
